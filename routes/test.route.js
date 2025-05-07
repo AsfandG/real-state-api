@@ -1,18 +1,10 @@
 import express from "express";
 import jwt from "jsonwebtoken";
+import { verifyToken } from "../middlewares/verifyToken.js";
 
 const router = express.Router();
 
-router.get("/should-be-logged-in", (req, res) => {
-  const token = req.cookies.token;
-  if (!token) {
-    return res.status(401).json({ message: "You are not authenticated!" });
-  }
-
-  jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, payload) => {
-    if (err) return res.status(403).json({ message: "Token is not valid!" });
-  });
-
+router.get("/should-be-logged-in", verifyToken, (req, res) => {
   res.status(200).json({ message: "You are authenticated!" });
 });
 
