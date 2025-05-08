@@ -59,7 +59,7 @@ export const login = async (req, res) => {
         maxAge: age,
       })
       .status(200)
-      .json({ success: true, userInfo });
+      .json(userInfo);
   } catch (error) {
     res.status(500).json({
       success: false,
