@@ -1,3 +1,4 @@
+import { uploadToCloudinary } from "../helpers/uploadImage.js";
 import prisma from "../lib/prisma.js";
 import bcrypt from "bcrypt";
 
@@ -25,23 +26,30 @@ export const getUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   const id = req.params.id;
   const tokenUserId = req.userId;
-  const { password, avatar, ...inputs } = req.body;
+  const { password, ...inputs } = req.body;
 
   if (id !== tokenUserId) {
     return res.status(403).json({ message: "Not Authenticated!" });
   }
 
   let updatedPassword = null;
+  let avatarUrl = null;
   try {
     if (password) {
       updatedPassword = await bcrypt.hash(password, 10);
     }
+
+    if (req.file) {
+      const result = await uploadToCloudinary(req.file.path);
+      avatarUrl = result.url;
+    }
+
     const updatedUser = await prisma.user.update({
       where: { id },
       data: {
         ...inputs,
         ...(updatedPassword && { password: updatedPassword }),
-        ...(avatar && { avatar }),
+        ...(avatarUrl && { avatar: avatarUrl }),
       },
     });
 
