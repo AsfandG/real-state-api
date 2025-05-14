@@ -4,6 +4,7 @@ import express from "express";
 import authRoutes from "./routes/auth.routes.js";
 import testRoutes from "./routes/test.route.js";
 import userRoutes from "./routes/user.routes.js";
+import postRoutes from "./routes/post.route.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
@@ -18,6 +19,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/test", testRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/posts", postRoutes);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
