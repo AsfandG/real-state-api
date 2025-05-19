@@ -17,9 +17,6 @@ export const addPost = async (req, res) => {
     const postData = JSON.parse(req.body.postData);
     const postDetail = JSON.parse(req.body.postDetail);
 
-    console.log("postData >>>", postData);
-    console.log("postDetail", postDetail);
-
     const imagePaths = await Promise.all(
       req.files.map((file) =>
         uploadToCloudinary(file.path).then((res) => res.url)
