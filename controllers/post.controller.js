@@ -12,11 +12,13 @@ export const getPosts = async (req, res) => {
 };
 
 export const addPost = async (req, res) => {
-  const body = req.body;
   const tokenUserId = req.userId;
   try {
     const postData = JSON.parse(req.body.postData);
     const postDetail = JSON.parse(req.body.postDetail);
+
+    console.log("postData >>>", postData);
+    console.log("postDetail", postDetail);
 
     const imagePaths = await Promise.all(
       req.files.map((file) =>
