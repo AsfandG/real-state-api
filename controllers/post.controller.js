@@ -1,3 +1,4 @@
+import { uploadToCloudinary } from "../helpers/uploadImage.js";
 import prisma from "../lib/prisma.js";
 
 export const getPosts = async (req, res) => {
@@ -9,16 +10,28 @@ export const getPosts = async (req, res) => {
     res.status(500).json({ message: "Failed to get Posts" });
   }
 };
+
 export const addPost = async (req, res) => {
   const body = req.body;
   const tokenUserId = req.userId;
   try {
+    const postData = JSON.parse(req.body.postData);
+    const postDetail = JSON.parse(req.body.postDetail);
+
+    const imagePaths = await Promise.all(
+      req.files.map((file) =>
+        uploadToCloudinary(file.path).then((res) => res.url)
+      )
+    );
+
+    postData.images = imagePaths;
+
     const newPost = await prisma.post.create({
       data: {
-        ...body.postData,
+        ...postData,
         userId: tokenUserId,
         postDetail: {
-          create: body.postDetail,
+          create: postDetail,
         },
       },
     });
@@ -30,6 +43,7 @@ export const addPost = async (req, res) => {
     });
   }
 };
+
 export const getPost = async (req, res) => {
   const id = req.params.id;
   try {
